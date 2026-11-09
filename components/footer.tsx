@@ -53,8 +53,8 @@ const socialLinks: { href: string; icon: React.ComponentType<{ className?: strin
 ]
 
 function FooterLinkItem({ item }: { item: FooterLink }) {
+  const Icon = item.icon
   if (item.external) {
-    const Icon = item.icon
     return (
       <Link
         href={item.href}
@@ -62,21 +62,20 @@ function FooterLinkItem({ item }: { item: FooterLink }) {
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1.5 text-sm text-zinc-300 transition-colors hover:text-white"
       >
-        <Icon className="size-4" aria-hidden="true" />
+        {Icon && <Icon className="size-4" aria-hidden="true" />}
         {item.label}
       </Link>
     )
   }
-  const Icon = item.icon
   return (
     <Link
       href={item.href}
       className={cn(
         "text-sm text-zinc-300 transition-colors hover:text-white",
-        item.icon ? "inline-flex items-center gap-1.5" : "",
+        Icon ? "inline-flex items-center gap-1.5" : "",
       )}
     >
-      {item.icon && <Icon className="size-4" aria-hidden="true" />}
+      {Icon && <Icon className="size-4" aria-hidden="true" />}
       {item.label}
     </Link>
   )
