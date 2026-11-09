@@ -5,6 +5,7 @@ import Link from "next/link"
 import { MenuIcon, XIcon } from "lucide-react"
 
 import { BrandLogo } from "@/components/brand-logo"
+import { useSession,signOut } from "@/lib/auth-client"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
   Sheet,
@@ -26,6 +27,12 @@ const navLinks = [
 function SiteHeader() {
   const [open, setOpen] = React.useState(false)
   const closeButtonRef = React.useRef<HTMLButtonElement>(null)
+  const { data: session, isPending } = useSession()
+
+ const handleSignOut = async () => {
+    await signOut()
+  }
+
 
   return (
     <header className="sticky top-0 z-50 bg-[#08080b] px-3 pt-3 sm:px-4 sm:pt-4">
@@ -49,24 +56,42 @@ function SiteHeader() {
           </div>
 
           <div aria-hidden="true" className="h-6 w-px bg-white/15" />
-
           <div className="flex items-center gap-6">
-            <Link
-              href="/sign-in"
-              className="text-[15px] font-medium text-indigo-400 transition-colors hover:text-indigo-300"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/get-started"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "h-10 rounded-xl bg-brand-indigo px-5 text-[15px] font-medium text-white hover:bg-brand-indigo/90"
-              )}
-            >
-              Get Started
-            </Link>
-          </div>
+  {isPending ? null : session?.user ? (
+    <>
+      <span className="text-[#EDEDEF]">
+        Welcome, {session.user.name}!
+      </span>
+
+      <Button
+        onClick={handleSignOut}
+        nativeButton={false}
+        className="h-[38px] rounded-[8px] bg-transparent px-4 text-lg font-semibold text-[#645AFF] hover:bg-white/5 hover:text-[#645AFF]"
+      >
+        Sign Out
+      </Button>
+    </>
+  ) : (
+    <>
+      <Link
+        href="/sign-in"
+        className="text-[15px] font-medium text-indigo-400 transition-colors hover:text-indigo-300"
+      >
+        Sign In
+      </Link>
+
+      <Link
+        href="/sign-up"
+        className={cn(
+          buttonVariants({ size: "lg" }),
+          "h-10 rounded-xl bg-brand-indigo px-5 text-[15px] font-medium text-white hover:bg-brand-indigo/90"
+        )}
+      >
+        Get Started
+      </Link>
+    </>
+  )}
+</div>
         </div>
 
         <Sheet open={open} onOpenChange={setOpen}>

@@ -7,12 +7,23 @@ function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
+  // next-themes renders an inline <script> that applies the stored theme
+  // before paint. React 19.3+ logs a console error when a script tag is
+  // created by a client render. On the client we mark the script as a
+  // non-executable data block (`type="application/json"`) so React skips
+  // the warning; the attribute mismatch during hydration is already
+  // suppressed by next-themes. During SSR the script stays executable so
+  // it still runs in the initial HTML.
+  const scriptProps =
+    typeof window === "undefined" ? undefined : { type: "application/json" }
+
   return (
     <NextThemesProvider
       attribute="class"
       defaultTheme="dark"
       enableSystem
       disableTransitionOnChange
+      scriptProps={scriptProps}
       {...props}
     >
       <ThemeHotkey />

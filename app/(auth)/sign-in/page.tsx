@@ -2,29 +2,23 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 
 import { AuthForm, AuthFormData } from "@/components/auth-form";
 import { authClient } from "@/lib/auth-client";
 
 export default function SignInPage() {
-  const router = useRouter();
-
   const [error, setError] = React.useState<string | null>(null);
 
   const handleSignIn = async (data: AuthFormData) => {
     setError(null);
 
     try {
-      const { data: signInResponse, error: signInError } =
-        await authClient.signIn.email({
-          email: data.email,
-          password: data.password,
-          rememberMe: true,
-          callbackURL: "/",
-        });
-
-      console.log("Signin response:", signInResponse);
+      const { error: signInError } = await authClient.signIn.email({
+        email: data.email,
+        password: data.password,
+        rememberMe: true,
+        callbackURL: "/",
+      });
 
       if (signInError) {
         setError(
@@ -34,8 +28,11 @@ export default function SignInPage() {
         return;
       }
 
-      router.replace("/");
-      router.refresh();
+      // The sign-in response sets the session cookie. Navigate with a full
+      // page load so the homepage is requested fresh with that cookie —
+      // the client-side router can otherwise show a stale render and the
+      // session is never picked up.
+      window.location.assign("/");
     } catch (err) {
       console.error("Signin error:", err);
 
