@@ -18,16 +18,20 @@ import {
 } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
 
-const navLinks = [
-  { label: "Browse Jobs", href: "/jobs" },
-  { label: "Company", href: "/company" },
-  { label: "Pricing", href: "/pricing" },
-]
+
 
 function SiteHeader() {
   const [open, setOpen] = React.useState(false)
   const closeButtonRef = React.useRef<HTMLButtonElement>(null)
   const { data: session, isPending } = useSession()
+
+const navLinks = [
+  { label: "Browse Jobs", href: "/jobs" },
+  { label: "Company", href: "/company" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Dashboard", href: `/dashboard/${session?.user.role || 'seeker'}` },
+] as const
+
 
  const handleSignOut = async () => {
     await signOut()
