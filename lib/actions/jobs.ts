@@ -1,37 +1,23 @@
-"use server"
+import { JobFormData } from "@/app/dashboard/recruiter/jobs/new/page";
 
-// TODO: replace these stubs with real backend wiring (e.g. `POST /jobs`).
-// The shapes mirror what the recruiter pages expect so callers keep working
-// once the actual API is connected.
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
 
-type JobInput = {
-    title: string
-    companyName: string
-    category: string
-    jobType: "full-time" | "part-time" | "contract" | "internship"
-    isRemote: boolean
-    location: string
-    deadline: string
-    minSalary: string
-    maxSalary: string
-    salaryFrequency: string
-    responsibilities: string
-    requirements: string
+
+export const createJob = async (data: JobFormData) => {
+    const res = await fetch(`${BASE_URL}/jobs`, {
+        method: "POST",
+        headers: {
+            'content-type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+    return res.json();
 }
 
-export async function createJob(data: JobInput) {
-    console.log("createJob stub — job data not persisted:", data)
+export const deleteJob = async (jobId: string) => {
+    const res = await fetch(`${BASE_URL}/jobs/${jobId}`, {
+        method: 'DELETE'
+    });
 
-    return {
-        success: true as const,
-        id: crypto.randomUUID(),
-        data,
-    }
-}
-
-export async function deleteJob(id: string) {
-    console.log("deleteJob stub — job not deleted:", id)
-
-    // Mongo-style response so callers checking `deletedCount` keep working.
-    return { deletedCount: 1, id }
+    return res.json();
 }
