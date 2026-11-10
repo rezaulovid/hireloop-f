@@ -3,18 +3,17 @@ import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Eye, Pencil, MoreHorizontal, Plus, Users } from "lucide-react"
-import type { JobFormData } from "@/app/dashboard/recruiter/jobs/new/page"
+import type { JobFormData, JobStatus } from "@/app/dashboard/recruiter/jobs/new/page"
 import { getJobs } from "@/lib/api/jobs"
 import { DeleteJobDialog } from "@/app/components/DeleteJobDialog"
 
 // Table rows carry the same flat shape the "Post a New Job" form (JobFormData)
 // stores, plus the extra fields only the table needs.
-type JobStatus = "active" | "expired"
+
 
 export type JobRow = JobFormData & {
     _id: string
-    applicants: number
-    status: JobStatus
+    
     /** Relativized post date, e.g. "Posted 4d ago". */
     posted: string
 }
