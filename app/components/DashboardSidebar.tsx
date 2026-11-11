@@ -24,8 +24,9 @@ import {
     type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
+import type { UserRole } from "@/lib/types"
 
-type Role = "seeker" | "recruiter" | "admin"
+type Role = UserRole
 
 type MenuItem = {
     id: string

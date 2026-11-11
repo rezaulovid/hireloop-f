@@ -3,7 +3,8 @@
 
 import * as React from "react";
 
-import { AuthForm, AuthFormData } from "@/components/auth-form";
+import { AuthForm } from "@/components/auth-form";
+import type { AuthFormData } from "@/lib/types";
 import { authClient } from "@/lib/auth-client";
 
 function getSignUpErrorMessage(error: {

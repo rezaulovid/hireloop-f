@@ -1,6 +1,6 @@
 "use server"
 
-import { JobFormData } from "@/app/dashboard/recruiter/jobs/new/page";
+import type { JobFormData, JobRow } from "@/lib/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
 
@@ -12,7 +12,15 @@ const request = (path: string, init?: RequestInit) =>
             { cause: error },
         )
     })
+export const getJobs = async (query = ''): Promise<JobRow[]> => {
+    const res = await fetch(`${BASE_URL}/jobs?${query}`)
+    return res.json()
+}
 
+export const getJobById = async (jobId: string): Promise<JobRow> => {
+    const res = await fetch(`${BASE_URL}/jobs/${jobId}`)
+    return res.json()
+}
 
 export const createJob = async (data: JobFormData) => {
     const res = await request("/jobs", {

@@ -13,26 +13,10 @@ import { Briefcase, Calendar, MapPin } from "lucide-react"
 import { createJob } from "@/lib/actions/jobs"
 import { toast } from "@/components/ui/toast"
 import { useRouter } from "next/navigation"
-
-type JobType = "full-time" | "part-time" | "contract" | "internship"
-export type JobStatus = "active" | "expired"
-// Flat form data, keys mirror the Figma layer names (isRemote, deadline, minSalary…).
-export type JobFormData = {
-    title: string
-    companyName: string
-    category: string
-    jobType: JobType
-    isRemote: boolean
-    location: string
-    deadline: string
-    minSalary: string
-    maxSalary: string
-    salaryFrequency: string
-    responsibilities: string
-    requirements: string
-    applicants: number
-    status: JobStatus
-}
+import type { JobFormData, JobType } from "@/lib/types"
+import { Card } from "@/components/ui/card"
+import { SectionHeader } from "@/app/components/SectionHeader"
+import { inputClass } from "@/lib/styles"
 
 const JOB_CATEGORIES = [
     "Engineering & Tech",
@@ -46,15 +30,6 @@ const JOB_CATEGORIES = [
 const JOB_TYPES: JobType[] = ["full-time", "part-time", "contract", "internship"]
 
 const SALARY_FREQUENCIES = ["per hour", "per day", "per week", "per month", "per year"]
-
-const inputClass =
-    "bg-[#1A1A1F] border-white/10 focus-visible:border-[#5C53FE]/60 focus-visible:ring-[#5C53FE]/30 aria-invalid:border-destructive/60"
-const sectionClass =
-    "rounded-2xl border border-white/10 bg-[#101010]/95 p-6 shadow-[inset_0_3px_10px_rgba(255,255,255,0.04)]"
-const sectionHeadingClass =
-    "mb-6 flex items-center gap-3 font-heading text-lg font-semibold tracking-[-0.02em] text-white"
-const sectionBulletClass =
-    "flex size-7 items-center justify-center rounded-lg bg-[#5C53FE]/15 text-sm font-semibold text-[#8B85FF]"
 
 export default function NewJobPage() {
     const [form, setForm] = useState<JobFormData>({
@@ -118,15 +93,12 @@ export default function NewJobPage() {
 
             <form id="new-job-form" onSubmit={handleSubmit} className="flex flex-col gap-6">
                 {/* 1. Basic Information */}
-                <section className={sectionClass}>
-                    <h2 className={sectionHeadingClass}>
-                        <span className={sectionBulletClass}>1</span>
-                        Basic Information
-                    </h2>
+                <Card className="p-6">
+                    <SectionHeader step="1" title="Basic Information" />
 
                     <div className="flex flex-col gap-5">
                         {/* Job Title */}
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2   text-white">
                             <Label htmlFor="title">Job title</Label>
                             <Input
                                 id="title"
@@ -142,7 +114,7 @@ export default function NewJobPage() {
                         </div>
 
                         {/* Company Name & Job Category */}
-                        <div className="grid gap-5 sm:grid-cols-2">
+                        <div className="grid gap-5 sm:grid-cols-2  text-white">
                             <div className="flex flex-col gap-2">
                                 <Label htmlFor="companyName">Company name</Label>
                                 <div className="relative">
@@ -163,7 +135,7 @@ export default function NewJobPage() {
                                     />
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2  text-white">
                                 <Label htmlFor="category">Job category</Label>
                                 <Select
                                     value={form.category || ''}
@@ -184,7 +156,7 @@ export default function NewJobPage() {
                         </div>
 
                         {/* Job Type */}
-                        <fieldset className="flex flex-col gap-2">
+                        <fieldset className="flex flex-col gap-2  text-white">
                             <legend className="text-sm text-[#EDEDEF]/80">Job type</legend>
                             <RadioGroup
                                 value={form.jobType}
@@ -217,23 +189,20 @@ export default function NewJobPage() {
                             </RadioGroup>
                         </fieldset>
                     </div>
-                </section>
+                </Card>
 
                 {/* 2. Location, Compensation & Timeline */}
-                <section className={sectionClass}>
-                    <h2 className={sectionHeadingClass}>
-                        <span className={sectionBulletClass}>2</span>
-                        Location, Compensation &amp; Timeline
-                    </h2>
+                <Card className="p-6">
+                    <SectionHeader step="2" title="Location, Compensation &amp; Timeline" />
 
-                    <div className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-5  text-white">
                         {/* Remote Work Allowed (isRemote) */}
                         <div className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-[#1A1A1F] p-4">
                             <div className="flex flex-col gap-1">
                                 <Label htmlFor="isRemote" className="text-white/90">
                                     Remote work allowed
                                 </Label>
-                                <p className="text-xs text-white/50">
+                                <p className="text-xs text-white">
                                     Enable worldwide or distributed candidate applications
                                 </p>
                             </div>
@@ -245,7 +214,7 @@ export default function NewJobPage() {
                         </div>
 
                         {/* Job Location & Application Deadline */}
-                        <div className="grid gap-5 sm:grid-cols-2">
+                        <div className="grid gap-5 sm:grid-cols-2  text-white">
                             <div className="flex flex-col gap-2">
                                 <Label htmlFor="location">
                                     Job location <span className="text-destructive/70">*</span>
@@ -265,9 +234,9 @@ export default function NewJobPage() {
                                         className={`${inputClass} pl-9`}
                                     />
                                 </div>
-                                <p className="text-xs text-white/40">Required</p>
+                                <p className="text-xs text-white">Required</p>
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2  text-white">
                                 <Label htmlFor="deadline">Application deadline</Label>
                                 <div className="relative">
                                     <Calendar
@@ -287,7 +256,7 @@ export default function NewJobPage() {
                         </div>
 
                         {/* Salary Range (minSalary & maxSalary) */}
-                        <div className="grid gap-5 sm:grid-cols-[1fr_1fr_auto] sm:items-start">
+                        <div className="grid gap-5 sm:grid-cols-[1fr_1fr_auto]  text-white sm:items-start">
                             <div className="flex flex-col gap-2">
                                 <Label htmlFor="minSalary">Min salary / rate</Label>
                                 <Input
@@ -302,7 +271,7 @@ export default function NewJobPage() {
                                     className={inputClass}
                                 />
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2  text-white">
                                 <Label htmlFor="maxSalary">Max salary / rate</Label>
                                 <Input
                                     id="maxSalary"
@@ -316,7 +285,7 @@ export default function NewJobPage() {
                                     className={inputClass}
                                 />
                             </div>
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2  text-white">
                                 <Label htmlFor="salaryFrequency">Frequency</Label>
                                 <Select
                                     value={form.salaryFrequency}
@@ -336,17 +305,14 @@ export default function NewJobPage() {
                             </div>
                         </div>
                     </div>
-                </section>
+                </Card>
 
                 {/* 3. Responsibilities & Requirements */}
-                <section className={sectionClass}>
-                    <h2 className={sectionHeadingClass}>
-                        <span className={sectionBulletClass}>3</span>
-                        Responsibilities &amp; Requirements
-                    </h2>
+                <Card className="p-6 text-white">
+                    <SectionHeader step="3" title="Responsibilities &amp; Requirements" />
 
-                    <div className="flex flex-col gap-5">
-                        <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-5  text-white">
+                        <div className="flex flex-col gap-2  text-white">
                             <Label htmlFor="responsibilities">Key responsibilities</Label>
                             <Textarea
                                 id="responsibilities"
@@ -360,7 +326,7 @@ export default function NewJobPage() {
                                 className={inputClass}
                             />
                         </div>
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2  text-white">
                             <Label htmlFor="requirements">Qualifications &amp; requirements</Label>
                             <Textarea
                                 id="requirements"
@@ -375,7 +341,7 @@ export default function NewJobPage() {
                             />
                         </div>
                     </div>
-                </section>
+                </Card>
                 <section>
                     <Button type="submit" form="new-job-form" className="bg-[#5C53FE] hover:bg-[#7B74FF]">
                         <Briefcase aria-hidden />

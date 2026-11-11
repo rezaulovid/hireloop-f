@@ -3,20 +3,11 @@ import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Eye, Pencil, MoreHorizontal, Plus, Users } from "lucide-react"
-import type { JobFormData, JobStatus } from "@/app/dashboard/recruiter/jobs/new/page"
+import type { JobFormData, JobRow, JobStatus } from "@/lib/types"
 import { getJobs } from "@/lib/api/jobs"
 import { DeleteJobDialog } from "@/app/components/DeleteJobDialog"
-
-// Table rows carry the same flat shape the "Post a New Job" form (JobFormData)
-// stores, plus the extra fields only the table needs.
-
-
-export type JobRow = JobFormData & {
-    _id: string
-    
-    /** Relativized post date, e.g. "Posted 4d ago". */
-    posted: string
-}
+import { Card } from "@/components/ui/card"
+import { typePillClass } from "@/lib/styles"
 
 /** "25", "40", "per hour" → "€25 – €40 / hr" (as in the Figma rows). */
 const formatCompensation = (job: JobFormData) =>
@@ -32,8 +23,6 @@ const statusStyles: Record<JobStatus, string> = {
     active: "border-emerald-400/30 bg-emerald-400/15 text-emerald-300",
     expired: "border-white/10 bg-white/5 text-white/50",
 }
-const typePillClass =
-    "inline-flex items-center whitespace-nowrap rounded-lg border border-white/10 bg-[#1A1A1F] px-2.5 py-0.5 text-xs capitalize text-white/80"
 
 const iconButtonClass =
     "flex size-8 items-center justify-center rounded-md border border-white/10 bg-[#1A1A1F] text-white/60 transition-colors hover:border-white/25 hover:text-white"
@@ -85,7 +74,7 @@ export default async function RecruiterJobsPage() {
             </header>
 
             {/* Postings table — columns collapse away on smaller screens instead of scrolling */}
-            <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#101010]/95 shadow-[inset_0_3px_10px_rgba(255,255,255,0.04)]">
+            <Card className="overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="table-fixed w-full text-left text-sm">
                         <thead>
@@ -212,7 +201,7 @@ export default async function RecruiterJobsPage() {
                         </tbody>
                     </table>
                 </div>
-            </section>
+            </Card>
         </div>
     )
 }

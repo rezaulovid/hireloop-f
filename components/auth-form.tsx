@@ -15,17 +15,10 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import type { AuthFormData, UserRole } from "@/lib/types";
+import { Card } from "@/components/ui/card";
 
 export type AuthMode = "signin" | "signup";
-
-export type UserRole = "seeker" | "recruiter" | "admin";
-
-export type AuthFormData = {
-  email: string;
-  password: string;
-  name?: string;
-  role?: UserRole;
-};
 
 const COPY = {
   signin: {
@@ -145,7 +138,7 @@ export function AuthForm({
         </Link>
 
         {/* Authentication Card */}
-        <div className="w-full rounded-2xl border border-white/10 bg-[#101010]/95 p-6 shadow-[inset_0_3px_10px_rgba(255,255,255,0.06)] sm:p-8">
+        <Card className="w-full p-6 shadow-[inset_0_3px_10px_rgba(255,255,255,0.06)] sm:p-8">
 
           {/* Heading */}
           <div className="mb-6 flex flex-col gap-2 text-center">
@@ -358,7 +351,7 @@ export function AuthForm({
               {copy.footerLinkLabel}
             </Link>
           </p>
-        </div>
+        </Card>
       </div>
     </main>
   );
