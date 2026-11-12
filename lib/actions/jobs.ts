@@ -12,14 +12,37 @@ const request = (path: string, init?: RequestInit) =>
             { cause: error },
         )
     })
-export const getJobs = async (query = ''): Promise<JobRow[]> => {
-    const res = await fetch(`${BASE_URL}/jobs?${query}`)
-    return res.json()
+
+/** Some backends answer unknown routes with an HTML page (DOCTYPE…) — a bare
+ * `res.json()` then dies with `Unexpected token '<'`. Wrap parsing so the
+ * failure surfaces with the request path instead. */
+const parseJson = async <T>(res: Response, path: string): Promise<T> => {
+    try {
+        return (await res.json()) as T
+    } catch (error) {
+        throw new Error(
+            `Jobs API at ${BASE_URL}${path} returned a non-JSON body (HTML?) — is the backend route implemented?`,
+            { cause: error },
+        )
+    }
 }
 
-export const getJobById = async (jobId: string): Promise<JobRow> => {
-    const res = await fetch(`${BASE_URL}/jobs/${jobId}`)
-    return res.json()
+export const getJobs = async (query = ''): Promise<JobRow[]> => {
+    const res = await request(`/jobs?${query}`)
+    if (!res.ok) {
+        throw new Error(`Jobs API responded with ${res.status} ${res.statusText}`)
+    }
+    return parseJson<JobRow[]>(res, `/jobs?${query}`)
+}
+
+/** Missing job (HTTP 404) → null, so callers can render notFound(). */
+export const getJobById = async (jobId: string): Promise<JobRow | null> => {
+    const res = await request(`/jobs/${jobId}`)
+    if (res.status === 404) return null
+    if (!res.ok) {
+        throw new Error(`Jobs API responded with ${res.status} ${res.statusText}`)
+    }
+    return parseJson<JobRow>(res, `/jobs/${jobId}`)
 }
 
 export const createJob = async (data: JobFormData) => {
@@ -33,7 +56,7 @@ export const createJob = async (data: JobFormData) => {
     if (!res.ok) {
         throw new Error(`Jobs API responded with ${res.status} ${res.statusText}`)
     }
-    return res.json();
+    return parseJson<{ insertedId?: string }>(res, "/jobs");
 }
 
 export const deleteJob = async (jobId: string) => {
@@ -45,5 +68,5 @@ export const deleteJob = async (jobId: string) => {
         throw new Error(`Jobs API responded with ${res.status} ${res.statusText}`)
     }
 
-    return res.json();
+    return parseJson<{ deletedCount?: number }>(res, `/jobs/${jobId}`);
 }

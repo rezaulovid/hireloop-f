@@ -2,13 +2,19 @@
 "use client";
 
 import * as React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { AuthForm } from "@/components/auth-form";
 import type { AuthFormData } from "@/lib/types";
 import { authClient } from "@/lib/auth-client";
 
-export default function SignInPage() {
+function SignInForm() {
   const [error, setError] = React.useState<string | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // Where to send the user after signing in — guarded flows (e.g. Apply
+  // Now) pass the page they were on so the user lands back there.
+  const redirectTo = searchParams.get("redirectTo") || "/";
 
   const handleSignIn = async (data: AuthFormData) => {
     setError(null);
@@ -29,11 +35,11 @@ export default function SignInPage() {
         return;
       }
 
-      // The sign-in response sets the session cookie. Navigate with a full
-      // page load so the homepage is requested fresh with that cookie —
-      // the client-side router can otherwise show a stale render and the
-      // session is never picked up.
-      window.location.assign("/");
+      // The sign-in response sets the session cookie. Refresh re-renders
+      // server components with that cookie and clears the router cache,
+      // so the destination page shows the fresh session, not a stale one.
+      router.replace(redirectTo);
+      router.refresh();
     } catch (err) {
       console.error("Signin error:", err);
 
@@ -51,5 +57,14 @@ export default function SignInPage() {
       onSubmit={handleSignIn}
       error={error}
     />
+  );
+}
+
+export default function SignInPage() {
+  // useSearchParams needs a Suspense boundary during static prerendering.
+  return (
+    <React.Suspense fallback={null}>
+      <SignInForm />
+    </React.Suspense>
   );
 }

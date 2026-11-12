@@ -29,8 +29,6 @@ const JOB_CATEGORIES = [
 
 const JOB_TYPES: JobType[] = ["full-time", "part-time", "contract", "internship"]
 
-const SALARY_FREQUENCIES = ["per hour", "per day", "per week", "per month", "per year"]
-
 export default function NewJobPage() {
     const [form, setForm] = useState<JobFormData>({
         title: "",
@@ -40,9 +38,6 @@ export default function NewJobPage() {
         isRemote: false,
         location: "",
         deadline: "",
-        minSalary: "",
-        maxSalary: "",
-        salaryFrequency: "per hour",
         responsibilities: "",
         requirements: "",
          applicants: 0,
@@ -191,9 +186,9 @@ export default function NewJobPage() {
                     </div>
                 </Card>
 
-                {/* 2. Location, Compensation & Timeline */}
+                {/* 2. Location & Timeline */}
                 <Card className="p-6">
-                    <SectionHeader step="2" title="Location, Compensation &amp; Timeline" />
+                    <SectionHeader step="2" title="Location &amp; Timeline" />
 
                     <div className="flex flex-col gap-5  text-white">
                         {/* Remote Work Allowed (isRemote) */}
@@ -255,55 +250,6 @@ export default function NewJobPage() {
                             </div>
                         </div>
 
-                        {/* Salary Range (minSalary & maxSalary) */}
-                        <div className="grid gap-5 sm:grid-cols-[1fr_1fr_auto]  text-white sm:items-start">
-                            <div className="flex flex-col gap-2">
-                                <Label htmlFor="minSalary">Min salary / rate</Label>
-                                <Input
-                                    id="minSalary"
-                                    name="minSalary"
-                                    type="number"
-                                    min={0}
-                                    required
-                                    placeholder="25"
-                                    value={form.minSalary}
-                                    onChange={(e) => set("minSalary")(e.target.value)}
-                                    className={inputClass}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2  text-white">
-                                <Label htmlFor="maxSalary">Max salary / rate</Label>
-                                <Input
-                                    id="maxSalary"
-                                    name="maxSalary"
-                                    type="number"
-                                    min={0}
-                                    required
-                                    placeholder="40"
-                                    value={form.maxSalary}
-                                    onChange={(e) => set("maxSalary")(e.target.value)}
-                                    className={inputClass}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-2  text-white">
-                                <Label htmlFor="salaryFrequency">Frequency</Label>
-                                <Select
-                                    value={form.salaryFrequency}
-                                    onValueChange={(value) => set("salaryFrequency")(value ?? "")}
-                                >
-                                    <SelectTrigger id="salaryFrequency" className={`${inputClass} w-full`}>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {SALARY_FREQUENCIES.map((frequency) => (
-                                            <SelectItem key={frequency} value={frequency}>
-                                                {frequency}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
                     </div>
                 </Card>
 

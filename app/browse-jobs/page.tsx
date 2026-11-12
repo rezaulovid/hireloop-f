@@ -1,9 +1,9 @@
 import { getJobs } from "@/lib/api/jobs"
 import { Card } from "@/components/ui/card"
-import { JobSearchPanel } from "@/app/components/JobSearchPanel"
-import { FilterSidebar, type JobTypeOption } from "@/app/components/FilterSidebar"
 import { JobCard } from "@/app/components/JobCard"
 import { FilterSelect, type FilterOption } from "@/app/components/FilterSelect"
+import { JobSearchBar } from "./_components/job-search-bar"
+import { JobFiltersPanel } from "./_components/job-filters-panel"
 
 const SORT_OPTIONS: FilterOption[] = [
   { label: "Most Recent", value: "most-recent" },
@@ -11,13 +11,6 @@ const SORT_OPTIONS: FilterOption[] = [
   { label: "Highest Salary", value: "highest-salary" },
   { label: "Most Applicants", value: "most-applicants" },
 ]
-
-// Sidebar rows shown regardless of data (counts still derive from the list).
-const JOB_TYPE_FILTERS = [
-  { value: "full-time", label: "Full-time" },
-  { value: "contract", label: "Contract" },
-  { value: "freelance", label: "Freelance" },
-] as const
 
 const BrowseJobsPage = async ({ searchParams }: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -29,26 +22,15 @@ const BrowseJobsPage = async ({ searchParams }: {
     // TODO: implement the query-param wiring from the filter UI here.
     const jobs = await getJobs(search)
 
-    // Sidebar counts are derived from the fetched list (display only).
-    const jobTypeCounts = jobs.reduce<Record<string, number>>((acc, job) => {
-        acc[job.jobType] = (acc[job.jobType] ?? 0) + 1
-        return acc
-    }, {})
-    const jobTypeOptions: JobTypeOption[] = JOB_TYPE_FILTERS.map(({ value, label }) => ({
-        label,
-        value,
-        count: jobTypeCounts[value] ?? 0,
-    }))
-
     return (
         <div className="bg-[#0a0a0b] pb-16">
             <div className="mx-auto w-full max-w-6xl px-4 py-8">
                 {/* Search panel */}
-                <JobSearchPanel />
+                <JobSearchBar />
 
                 {/* Filters + results */}
                 <div className="mt-6 grid gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-                    <FilterSidebar jobTypeOptions={jobTypeOptions} />
+                    <JobFiltersPanel jobs={jobs} />
 
                     <section>
                         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">

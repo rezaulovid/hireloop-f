@@ -2,16 +2,12 @@ import Link from "next/link"
 
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Eye, Pencil, MoreHorizontal, Plus, Users } from "lucide-react"
-import type { JobFormData, JobRow, JobStatus } from "@/lib/types"
+import { Eye, Pencil, Plus, Users } from "lucide-react"
+import type { JobRow, JobStatus } from "@/lib/types"
 import { getJobs } from "@/lib/api/jobs"
 import { DeleteJobDialog } from "@/app/components/DeleteJobDialog"
 import { Card } from "@/components/ui/card"
 import { typePillClass } from "@/lib/styles"
-
-/** "25", "40", "per hour" → "€25 – €40 / hr" (as in the Figma rows). */
-const formatCompensation = (job: JobFormData) =>
-    `€${job.minSalary} – €${job.maxSalary} / ${job.salaryFrequency.replace("per ", "")}`
 
 /** "2025-05-30" → "May 30, 2025". Fixed en-US so SSR and client agree. */
 const formatDeadline = (deadline: string) =>
@@ -31,7 +27,6 @@ const iconButtonClass =
 const cellVis = {
     company: "hidden md:table-cell",
     type: "hidden lg:table-cell",
-    compensation: "hidden lg:table-cell",
     applicants: "hidden lg:table-cell",
     deadline: "hidden lg:table-cell",
 } satisfies Record<string, string>
@@ -88,9 +83,6 @@ export default async function RecruiterJobsPage() {
                                 <th scope="col" className={cn(headingClass, cellVis.type, "lg:w-[9%]")}>
                                     Type
                                 </th>
-                                <th scope="col" className={cn(headingClass, cellVis.compensation, "lg:w-[12%]")}>
-                                    Compensation
-                                </th>
                                 <th scope="col" className={cn(headingClass, cellVis.applicants, "lg:w-[12%]")}>
                                     Applicants
                                 </th>
@@ -144,13 +136,6 @@ export default async function RecruiterJobsPage() {
                                     {/* Type */}
                                     <td className={cn(cellClass, cellVis.type)}>
                                         <span className={typePillClass}>{job.jobType}</span>
-                                    </td>
-
-                                    {/* Compensation */}
-                                    <td className={cn(cellClass, cellVis.compensation)}>
-                                        <span className="whitespace-nowrap text-white/80">
-                                            {formatCompensation(job)}
-                                        </span>
                                     </td>
 
                                     {/* Applicants */}

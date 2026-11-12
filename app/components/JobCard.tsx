@@ -1,6 +1,7 @@
 "use client"
 
-import { BanknoteIcon, BookmarkIcon, ClockIcon, FlameIcon } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { BookmarkIcon, ClockIcon, FlameIcon } from "lucide-react"
 
 import { Card } from "@/components/ui/card"
 import { cn } from "cn"
@@ -9,18 +10,30 @@ import type { JobRow } from "@/lib/types"
 const pillClass =
   "inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-[#1A1A1F] px-2.5 py-1 text-xs font-medium text-white/70 capitalize"
 
-/** "25","40","per hour" → "$25 – $40 / hr"; "140","180","per year" → "$140k – $180k". */
-const formatSalary = (job: JobRow) =>
-  job.salaryFrequency === "per year"
-    ? `$${job.minSalary}k – $${job.maxSalary}k`
-    : `$${job.minSalary} – $${job.maxSalary} / ${job.salaryFrequency.replace("per ", "")}`
-
 /** Placeholder heuristic for the amber "Hot Job" pill until real flagging exists. */
 const HOT_JOB_MIN_APPLICANTS = 100
 
 function JobCard({ job }: { job: JobRow }) {
+  const router = useRouter()
+
+  /** Whole-card click target → the job's details page under /browse-jobs. */
+  const handleViewJobDetail = (jobId: string) => {
+    router.push(`/browse-jobs/${jobId}`)
+  }
+
   return (
-    <Card className="p-4 transition-colors hover:border-white/20 sm:p-5">
+    <Card
+      role="button"
+      tabIndex={0}
+      onClick={() => handleViewJobDetail(job._id)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault()
+          handleViewJobDetail(job._id)
+        }
+      }}
+      className="cursor-pointer p-4 transition-colors hover:border-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C53FE]/60 sm:p-5"
+    >
       <div className="flex items-start gap-4">
         {/* Company logo placeholder — initial until logos exist in the data */}
         <span
@@ -37,10 +50,6 @@ function JobCard({ job }: { job: JobRow }) {
           </p>
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className={pillClass}>
-              <BanknoteIcon aria-hidden className="size-3.5 text-white/50" />
-              {formatSalary(job)}
-            </span>
             <span className={pillClass}>
               <ClockIcon aria-hidden className="size-3.5 text-white/50" />
               {job.jobType}
@@ -62,7 +71,11 @@ function JobCard({ job }: { job: JobRow }) {
         <button
           type="button"
           aria-label={`Save ${job.title}`}
-          onClick={() => { /* TODO: wire saving later */ }}
+          onClick={(event) => {
+            // Bookmark is independent — must not trigger the card navigation.
+            event.stopPropagation()
+            /* TODO: wire saving later */
+          }}
           className="rounded-md p-1.5 text-white/40 transition-colors hover:bg-white/5 hover:text-white"
         >
           <BookmarkIcon aria-hidden className="size-4" />
