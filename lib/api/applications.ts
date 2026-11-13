@@ -59,6 +59,19 @@ export const getApplications = async (query?: ApplicationsQuery): Promise<JobApp
     return parseJson<JobApplicationRow[]>(res, path)
 }
 
+// GET /applications/count?applicantId=… — how many applications a seeker has.
+// The API names this filter `applicantId`; it maps to the stored `userId`.
+export const getApplicationsCount = async (userId: string): Promise<{ count: number }> => {
+    const path = `/applications/count?applicantId=${encodeURIComponent(userId)}`
+    const res = await request(path)
+    if (!res.ok) {
+        throw new Error(`Applications API responded with ${res.status} ${res.statusText}`)
+    }
+    return parseJson<{ count: number }>(res, path)
+}
+
+
+
 /**
  * POST /applications — saves an application.
  *

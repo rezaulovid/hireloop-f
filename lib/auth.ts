@@ -19,6 +19,16 @@ export const auth = betterAuth({
                 input: true,
                 defaultValue: "seeker",
             },
+            /**
+             * Premium seekers can apply to every job; free seekers are capped.
+             * `input: false` keeps it server-owned — a payment flow flips it
+             * on the user document, never the client.
+             */
+            premium: {
+                type: "boolean",
+                input: false,
+                defaultValue: false,
+            },
         },
     },
     socialProviders: {

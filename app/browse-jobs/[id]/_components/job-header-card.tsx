@@ -7,8 +7,12 @@ import type { JobApplication, JobRow } from "@/lib/types"
 import { Bookmark, LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
-import { createApplication } from "@/lib/api/applications"
+import { createApplication, getApplicationsCount } from "@/lib/api/applications"
 import { toast } from "@/components/ui/toast"
+
+/** How many jobs a free (non-premium) seeker can apply to. */
+const FREE_APPLICATION_LIMIT = 2
+
 export function JobHeaderCard({ job }: { job: JobRow }) {
     const { data: session, isPending: isSessionPending } = useSession()
     const router = useRouter()
@@ -33,9 +37,23 @@ export function JobHeaderCard({ job }: { job: JobRow }) {
             })
             return
         }
-
         setIsSubmitting(true)
         try {
+            // Free seekers are capped; premium seekers can apply to every job.
+            // The count is checked before the application is created so the
+            // limit can't be raced past by a second click.
+            if (!user.premium) {
+                const { count } = await getApplicationsCount(user.id)
+                if (count >= FREE_APPLICATION_LIMIT) {
+                    toast.add({
+                        title: "Free plan limit reached",
+                        description: `Free seekers can apply to ${FREE_APPLICATION_LIMIT} jobs. Upgrade to premium to apply to more.`,
+                    })
+                    router.push('/checkout')
+                    return
+                }
+            }
+
             // Save the full application snapshot (job + seeker + lifecycle)
             // so the My Applications page can render with no joins.
             const application: JobApplication = {
