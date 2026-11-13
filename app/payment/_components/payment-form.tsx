@@ -18,7 +18,6 @@ import {
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { toast } from "@/components/ui/toast"
 import { formatAmount, type Plan } from "@/lib/plans"
 
 type PaymentDetails = {
@@ -175,45 +174,47 @@ export function PaymentForm({
         return next
     }
 
-    const handlePay = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        if (isPaying) return
+    /**
+     * Validates the form, then lets the browser POST it to
+     * `/api/checkout_sessions`, which creates the Stripe Checkout session and
+     * redirects to Stripe's hosted checkout page.
+     */
+    const handlePay = (event: React.FormEvent<HTMLFormElement>) => {
+        if (isPaying) {
+            event.preventDefault()
+            return
+        }
 
         const nextErrors = validate()
         setErrors(nextErrors)
-        if (Object.keys(nextErrors).length > 0) return
-
-        setIsPaying(true)
-        try {
-            // Remember where to send the user after the (future) Stripe
-            // redirect — the success page reads it back.
-            sessionStorage.setItem("payment:returnTo", redirectTo)
-
-            // TODO: create a Stripe Checkout session and redirect to it:
-            //   const { url } = await createCheckoutSession({
-            //       priceId: plan.stripePriceId,
-            //       customerEmail: user.email,
-            //       successUrl: `${origin}/payment/success`,
-            //       cancelUrl: `${origin}/payment`,
-            //   })
-            //   window.location.assign(url)
-            // The card details are never sent to our backend — Stripe
-            // collects them on its hosted page.
-            toast.add({
-                title: "Payment isn't live yet",
-                description:
-                    "Stripe Checkout is coming soon. Your card details were not saved.",
-            })
-        } finally {
-            setIsPaying(false)
+        if (Object.keys(nextErrors).length > 0) {
+            event.preventDefault()
+            return
         }
+
+        // Valid — let the form submit natively so the browser follows the
+        // redirect to Stripe.
+        setIsPaying(true)
     }
 
     const total = formatAmount(plan.amount, plan.currency)
 
     return (
-        <form onSubmit={handlePay} className="flex flex-col gap-5" noValidate>
-            {/* Card details */}
+        <form
+            action="/api/checkout_sessions"
+            method="post"
+            onSubmit={handlePay}
+            className="flex flex-col gap-5"
+            noValidate
+        >
+            {/* Where to send the user once the payment completes. */}
+            <input type="hidden" name="redirectTo" value={redirectTo} />
+
+            {/* Card details
+                The inputs here have no `name` attribute on purpose: a field
+                without a name is never submitted, so the card details stay in
+                the browser and never reach our server. Stripe collects the
+                card on its own hosted checkout page. */}
             <section className="rounded-2xl border border-white/10 bg-[#101010]/95 p-6 shadow-[inset_0_3px_10px_rgba(255,255,255,0.04)]">
                 <div className="mb-5 flex items-center justify-between gap-4">
                     <h2 className="text-[18px] font-semibold tracking-[-0.02em] text-[#EDEDEF]">
@@ -244,7 +245,6 @@ export function PaymentForm({
                         />
                         <input
                             id="card-name"
-                            name="name"
                             type="text"
                             autoComplete="cc-name"
                             required
@@ -277,7 +277,6 @@ export function PaymentForm({
                         />
                         <input
                             id="card-number"
-                            name="number"
                             type="text"
                             inputMode="numeric"
                             autoComplete="cc-number"
@@ -308,7 +307,6 @@ export function PaymentForm({
                         <div className="relative">
                             <input
                                 id="card-expiry"
-                                name="expiry"
                                 type="text"
                                 inputMode="numeric"
                                 autoComplete="cc-exp"
@@ -341,7 +339,6 @@ export function PaymentForm({
                             />
                             <input
                                 id="card-cvc"
-                                name="cvc"
                                 type="text"
                                 inputMode="numeric"
                                 autoComplete="cc-csc"
@@ -452,8 +449,8 @@ export function PaymentForm({
 
             <p className="flex items-center justify-center gap-2 text-center text-xs text-white/50">
                 <Lock aria-hidden className="size-3.5" />
-                Secure checkout — your card details are encrypted and never stored
-                on our servers.
+                Secure checkout — your card is charged on Stripe&apos;s hosted
+                page and never touches our servers.
             </p>
         </form>
     )

@@ -32,6 +32,9 @@ export const PREMIUM_PLAN: Plan = {
         "Priority listing in recruiter searches",
         "Early access to new postings",
     ],
+    // Price created in the Stripe dashboard — the amount above is only used
+    // for display; Stripe is the source of truth for what's charged.
+    stripePriceId: "price_1UbJ3pRqGG8ZD2vcXSSAo2VH",
 }
 
 /**

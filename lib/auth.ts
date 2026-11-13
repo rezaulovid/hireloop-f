@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 const client = new MongoClient(process.env.BETTER_AUTH_DB_URI as string);
 
@@ -42,3 +42,21 @@ export const auth = betterAuth({
   }),
 
 });
+
+/**
+ * Flips the `premium` flag on a user document.
+ *
+ * `premium` is an additional field with `input: false`, so it can't be set
+ * through the client API — it has to be written here, server-side. The mock
+ * checkout calls this; the real flow does it from the Stripe webhook.
+ */
+export const setUserPremium = async (userId: string, premium = true): Promise<void> => {
+    // The session carries the user id as a string; Mongo stores it as an ObjectId.
+    if (!ObjectId.isValid(userId)) {
+        throw new Error(`Cannot set premium — "${userId}" is not a valid user id.`)
+    }
+
+    await db
+        .collection("user")
+        .updateOne({ _id: new ObjectId(userId) }, { $set: { premium } })
+}
