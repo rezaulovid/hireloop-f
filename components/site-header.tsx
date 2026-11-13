@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { MenuIcon, XIcon } from "lucide-react"
 
 import { BrandLogo } from "@/components/brand-logo"
@@ -24,6 +25,10 @@ function SiteHeader() {
   const [open, setOpen] = React.useState(false)
   const closeButtonRef = React.useRef<HTMLButtonElement>(null)
   const { data: session, isPending } = useSession()
+  const pathname = usePathname()
+
+  // The dashboard renders its own sidebar + topbar (see app/dashboard).
+  if (pathname?.startsWith("/dashboard")) return null
 
 const navLinks = [
   { label: "Browse Jobs", href: "/jobs" },

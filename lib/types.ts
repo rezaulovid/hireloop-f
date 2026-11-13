@@ -43,30 +43,48 @@ export type JobRow = JobFormData & {
 
 // ---------- Applications ----------
 
+/**
+ * Lifecycle of an application, from the moment the seeker applies until the
+ * process ends. Mirrors the `status` field allowed by the applications
+ * collection schema on the API side.
+ */
 export type ApplicationStatus =
   | "applied"
   | "reviewed"
   | "shortlisted"
+  | "interview"
+  | "offered"
   | "rejected"
   | "hired";
 
-// Full application snapshot (job + seeker + lifecycle) so the My Applications
-// page can render with no joins.
-export type ApplicationFormData = {
+/**
+ * A job application — the snapshot of the job taken at the time of applying,
+ * plus the applicant identity and the application lifecycle. Stored in the
+ * `applications` collection; the My Applications page renders it with no joins.
+ */
+export type JobApplication = {
+  /** `_id` of the applied job (relation to the `jobs` collection). */
   jobId: string;
+  /** `_id` of the applicant (relation to the `user` collection). */
   userId: string;
   email: string;
   jobTitle: string;
   companyName: string;
+  /** Job category, e.g. "Design". */
+  category: string;
+  /** Employment type — "Full-time", "Contract", … */
   jobType: JobType;
   isRemote: boolean;
   location: string;
   deadline: string;
+  /** ISO 8601 timestamp of when the seeker applied. */
   appliedAt: string;
   status: ApplicationStatus;
+  /** Archived applications are hidden from the "Active" tab. */
   archived: boolean;
 };
 
-export type ApplicationRow = ApplicationFormData & {
+/** A stored application, including its Mongo `_id`. */
+export type JobApplicationRow = JobApplication & {
   _id: string;
 };

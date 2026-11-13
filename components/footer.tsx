@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { ExternalLink, GitBranch, Mail, X } from "lucide-react"
 
 import { BrandLogo } from "@/components/brand-logo"
@@ -95,6 +96,11 @@ function FooterColumn({ title, items }: { title: string; items: FooterLink[] }) 
 }
 
 function Footer() {
+  const pathname = usePathname()
+
+  // Dashboard pages use the dashboard chrome instead of the public footer.
+  if (pathname?.startsWith("/dashboard")) return null
+
   return (
     <footer className="bg-[#08080b] border-t border-white/[0.06]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

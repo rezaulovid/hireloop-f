@@ -3,7 +3,7 @@
 // line, and the bookmark + Apply Now actions.
 "use client"
 import { useState } from "react"
-import type { ApplicationFormData, JobRow } from "@/lib/types"
+import type { JobApplication, JobRow } from "@/lib/types"
 import { Bookmark, LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
@@ -38,12 +38,13 @@ export function JobHeaderCard({ job }: { job: JobRow }) {
         try {
             // Save the full application snapshot (job + seeker + lifecycle)
             // so the My Applications page can render with no joins.
-            const application: ApplicationFormData = {
+            const application: JobApplication = {
                 jobId: job._id,
                 userId: user.id,
                 email: user.email,
                 jobTitle: job.title,
                 companyName: job.companyName,
+                category: job.category,
                 jobType: job.jobType,
                 isRemote: job.isRemote,
                 location: job.location,
