@@ -49,7 +49,8 @@ export function JobHeaderCard({ job }: { job: JobRow }) {
                         title: "Free plan limit reached",
                         description: `Free seekers can apply to ${FREE_APPLICATION_LIMIT} jobs. Upgrade to premium to apply to more.`,
                     })
-                    router.push('/checkout')
+                    // Send the user back to this job after they upgrade.
+                    router.push(`/payment?redirectTo=/browse-jobs/${job._id}`)
                     return
                 }
             }
