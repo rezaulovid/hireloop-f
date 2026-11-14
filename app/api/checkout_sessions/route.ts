@@ -1,9 +1,10 @@
+
 // Creates a Stripe Checkout Session and redirects the browser to Stripe's
 // hosted checkout page.
 //
 // The payment form POSTs here (a top-level form post, so the browser follows
-// the redirect to Stripe). Stripe owns the charge; we only tell it what to
-// sell and where to send the user afterwards.
+// the redirect to Stripe). Stripe owns the charge; we only tell it what
+// to sell and where to send the user afterwards.
 
 import { NextResponse } from "next/server"
 import { headers } from "next/headers"
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
             },
             success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&redirectTo=${encodeURIComponent(returnTo)}`,
             cancel_url: `${origin}/payment?canceled=1`,
+            integration_identifier: "hire_loop_web_001",
         })
 
         return NextResponse.redirect(checkoutSession.url as string, 303)

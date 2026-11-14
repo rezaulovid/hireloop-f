@@ -13,33 +13,10 @@ import { cn } from "@/lib/utils"
 import { formatRelativeTime } from "@/lib/format"
 import type { ApplicationStatus, JobApplicationRow } from "@/lib/types"
 import { ChevronLeft, ChevronRight, Download } from "lucide-react"
+import { ApplicationStatusPill } from "@/components/applications/application-status-pill"
 
 const cardShadow =
     "shadow-[0_1px_2px_rgba(0,0,0,0.35)] shadow-[inset_0_1px_rgba(255,255,255,0.035)]"
-
-/** Label + accent color for each application status, used by the status pill. */
-const STATUS_META: Record<ApplicationStatus, { label: string; color: string }> = {
-    applied: { label: "Applied", color: "#3B82F6" },
-    reviewed: { label: "In Review", color: "#F59E0B" },
-    shortlisted: { label: "Shortlisted", color: "#22C55E" },
-    interview: { label: "Interview", color: "#A855F7" },
-    offered: { label: "Offered", color: "#14B8A6" },
-    rejected: { label: "Rejected", color: "#EF4444" },
-    hired: { label: "Hired", color: "#22C55E" },
-}
-
-/** Status pill: colored border + text on a 10% tint of the same color. */
-function StatusPill({ status }: { status: ApplicationStatus }) {
-    const { label, color } = STATUS_META[status]
-    return (
-        <span
-            className="inline-flex h-[22px] items-center whitespace-nowrap rounded-full border px-2.5 text-xs font-medium"
-            style={{ color, borderColor: color, backgroundColor: `${color}1A` }}
-        >
-            {label}
-        </span>
-    )
-}
 
 // Avatar tile palette from the Figma rows (32×32, radius 4).
 const AVATAR_TILES = [
@@ -213,7 +190,7 @@ export function ApplicationsBoard({
                                             {formatRelativeTime(app.appliedAt)}
                                         </td>
                                         <td className="pr-3">
-                                            <StatusPill status={app.status} />
+                                            <ApplicationStatusPill status={app.status} />
                                         </td>
                                         <td className="pr-4 text-right">
                                             <Link

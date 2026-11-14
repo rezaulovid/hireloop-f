@@ -5,19 +5,13 @@
 // (the source of truth). Keep both in sync — the field list mirrors the
 // `applications` collection schema.
 
+import { APPLICATION_STATUSES } from "@/lib/applications"
 import type { ApplicationStatus, JobApplication, JobType } from "@/lib/types"
 
 export const JOB_TYPES: JobType[] = ["full-time", "part-time", "contract", "internship"]
 
-export const APPLICATION_STATUSES: ApplicationStatus[] = [
-    "applied",
-    "reviewed",
-    "shortlisted",
-    "interview",
-    "offered",
-    "rejected",
-    "hired",
-]
+// Re-exported so existing imports from this module keep working.
+export { APPLICATION_STATUSES }
 
 export type ValidationResult =
     | { ok: true; data: JobApplication }

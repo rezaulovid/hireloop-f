@@ -43,18 +43,18 @@ export default async function RecruiterJobsPage() {
         <div className="mx-auto w-full max-w-6xl px-4 py-8">
             {/* Breadcrumb */}
             <nav className="mb-6 flex items-center gap-2 text-sm">
-                <span className="text-black/50">Manage Jobs</span>
-                <span aria-hidden className="text-black/30">/</span>
-                <span className="text-black/90">Job Listings &amp; Postings</span>
+                <span className="text-white/50">Manage Jobs</span>
+                <span aria-hidden className="text-white/30">/</span>
+                <span className="text-white/90">Job Listings &amp; Postings</span>
             </nav>
 
             {/* Page heading + primary action */}
             <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
                 <div className="flex flex-col gap-1.5">
-                    <h1 className="font-heading text-[28px] leading-[1.15] font-bold tracking-[-0.02em] text-black">
+                    <h1 className="font-heading text-[28px] leading-[1.15] font-bold tracking-[-0.02em] text-white">
                         Manage Job Posts
                     </h1>
-                    <p className="text-sm text-black/60">
+                    <p className="text-sm text-white">
                         Review live listings, monitor applicants, and update job details
                         across your organization.
                     </p>
@@ -77,13 +77,13 @@ export default async function RecruiterJobsPage() {
                                 <th scope="col" className={cn(headingClass, "px-5", "lg:w-[20%]")}>
                                     Job title &amp; dept
                                 </th>
-                                <th scope="col" className={cn(headingClass, cellVis.company, "lg:w-[16%]")}>
+                                <th scope="col" className={cn(headingClass, cellVis.company, "lg:w-[15%]")}>
                                     Company &amp; location
                                 </th>
                                 <th scope="col" className={cn(headingClass, cellVis.type, "lg:w-[9%]")}>
                                     Type
                                 </th>
-                                <th scope="col" className={cn(headingClass, cellVis.applicants, "lg:w-[12%]")}>
+                                <th scope="col" className={cn(headingClass, cellVis.applicants, "lg:w-[11%]")}>
                                     Applicants
                                 </th>
                                 <th scope="col" className={cn(headingClass, "lg:w-[9%]")}>
@@ -92,7 +92,7 @@ export default async function RecruiterJobsPage() {
                                 <th scope="col" className={cn(headingClass, cellVis.deadline, "lg:w-[11%]")}>
                                     Deadline
                                 </th>
-                                <th scope="col" className={cn(headingClass, "px-5", "lg:w-[11%]")}>
+                                <th scope="col" className={cn(headingClass, "px-5", "lg:w-[24%]")}>
                                     Actions
                                 </th>
                             </tr>
@@ -163,7 +163,7 @@ export default async function RecruiterJobsPage() {
 
                                     {/* Actions */}
                                     <td className={cn(cellClass, "px-5")}>
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex flex-wrap items-center gap-1.5">
                                             <button
                                                 type="button"
                                                 aria-label={`View ${job.title}`}
@@ -179,6 +179,14 @@ export default async function RecruiterJobsPage() {
                                                 <Pencil aria-hidden className="size-4" />
                                             </button>
                                             <DeleteJobDialog job={job}></DeleteJobDialog>
+                                            <Link
+                                                href={`/dashboard/recruiter/jobs/${job._id}/applications`}
+                                                aria-label={`View applications for ${job.title}`}
+                                                className="inline-flex h-8 items-center gap-1.5 rounded-md border border-white/10 bg-[#1A1A1F] px-2.5 text-xs font-medium whitespace-nowrap text-white/70 transition-colors hover:border-white/25 hover:text-white"
+                                            >
+                                                <Users aria-hidden className="size-3.5" />
+                                                Applications
+                                            </Link>
                                         </div>
                                     </td>
                                 </tr>

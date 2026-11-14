@@ -17,6 +17,7 @@ import type { JobFormData, JobType } from "@/lib/types"
 import { Card } from "@/components/ui/card"
 import { SectionHeader } from "@/app/components/SectionHeader"
 import { inputClass } from "@/lib/styles"
+import { useSession } from "@/lib/auth-client"
 
 const JOB_CATEGORIES = [
     "Engineering & Tech",
@@ -30,9 +31,11 @@ const JOB_CATEGORIES = [
 const JOB_TYPES: JobType[] = ["full-time", "part-time", "contract", "internship"]
 
 export default function NewJobPage() {
+    const {data:session}= useSession()
     const [form, setForm] = useState<JobFormData>({
         title: "",
         companyName: "",
+        recruiterId: session?.user.id??"",
         category: "",
         jobType: "full-time",
         isRemote: false,
@@ -72,13 +75,13 @@ export default function NewJobPage() {
         <div className="mx-auto w-full max-w-3xl px-4 py-8">
             <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
                 <div className="flex flex-col gap-1.5">
-                    <p className="text-xs font-medium tracking-wide text-[#03030d] uppercase">
+                    <p className="text-xs font-medium tracking-wide text-[#f3f3f8] uppercase">
                         Create New Listing
                     </p>
-                    <h1 className="font-heading text-[28px] leading-[1.15] font-bold tracking-[-0.02em] text-black">
+                    <h1 className="font-heading text-[28px] leading-[1.15] font-bold tracking-[-0.02em] text-white">
                         Post a New Job
                     </h1>
-                    <p className="text-sm text-black/60">
+                    <p className="text-sm text-white">
                         Fill in the position specifications to attract qualified talent across
                         our network.
                     </p>
