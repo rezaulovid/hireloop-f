@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { useSession } from "@/lib/auth-client"
 import { createApplication, getApplicationsCount } from "@/lib/api/applications"
 import { toast } from "@/components/ui/toast"
+import { getUserPremiumById } from "@/lib/users"
 
 /** How many jobs a free (non-premium) seeker can apply to. */
 const FREE_APPLICATION_LIMIT = 2
@@ -54,6 +55,20 @@ export function JobHeaderCard({ job }: { job: JobRow }) {
                     return
                 }
             }
+
+  // is premium user
+            const premiumResult = await getUserPremiumById(user.id)
+
+            console.log('premiumResult', premiumResult)
+            // number of jobs applied by this user
+            const countResult = await getApplicationsCount(`applicantId=${user.id}`)
+            // less more than 10 and not premium user
+            if (!premiumResult.premium && countResult.count >= 2) {
+                // redirect to the payment page
+                router.push('/checkout')
+                return
+            }
+
 
             // Save the full application snapshot (job + seeker + lifecycle)
             // so the My Applications page can render with no joins.
