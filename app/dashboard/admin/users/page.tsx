@@ -1,14 +1,15 @@
 import { getUsers } from '@/lib/users';
-import React from 'react';
+import { PageContainer } from '@/components/dashboard/page-shell'
+import { UserManagementBoard } from './_components/user-management-board'
 
-const AdminUsersPage =async () => {
-    const users = await getUsers();
-    console.log(users);
+const AdminUsersPage = async () => {
+    const { users, total } = await getUsers()
+
     return (
-        <div>
-            
-        </div>
-    );
-};
+        <PageContainer width="wide">
+            <UserManagementBoard users={users} total={total} />
+        </PageContainer>
+    )
+}
 
-export default AdminUsersPage;
+export default AdminUsersPage
